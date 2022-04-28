@@ -4,28 +4,28 @@
 #include <sstream> //Library helps to convert string into int
 #include<stdlib.h> //For Random number generating function
 #include<time.h> //For Time
-
-
+#define cards_number 60
+#define special_cards_number 10
 using namespace std;
-
-
- struct CardsSet
-    {
-        int Type; //0 -> Stale Card //1 -> Rabbit //2 -> Turtle
-        int State; //0 -> Not Deleted //1 -> Deleted
+struct CardsSet{
+        char Type; // T -> turtle Card // R -> Rabbit card // F -> Fast "golden card" // S -> Slow card //  0 -> No action // * -> already withdrawed
         string Question;
-        char Answer; // a or b or c or d //if f means that card's question is canceled
+        char Answer; // 1 or 2 or 3 or 4
         string Choice1;
         string Choice2;
         string Choice3;
         string Choice4;
-    };
-CardsSet GameCards[100];
+        };
+
+class Turtle_Rabbit_Run{
+public:
+    CardsSet GameCards[cards_number];
 //------------------------------------------------------------------------------------------------------------------------------------------------//
-void FillCards () //Fill Cards
+
+    void FillCards (string cards_type_file,string cards_questions_file,string cards_choices_file,string cards_answer_file) //Fill Cards
 {
-    ifstream QF_Type ("QF_Type.txt");
-    for(int i=0 ; i<100 ; i++) //Input Type File
+    ifstream QF_Type (cards_type_file);
+    for(int i=0 ; i<cards_number ; i++) //Input Type File
     {
         string line;
         getline (QF_Type,line);
@@ -33,14 +33,12 @@ void FillCards () //Fill Cards
         geek >> GameCards[i].Type;
     }
     QF_Type.close();
-    for(int i=0 ; i<100 ; i++) //Fill State 0
-        GameCards[i].State = 0;
-    ifstream QF_Questions ("QF_Questions.txt");
-    for(int i=0 ; i<100 ; i++) //Input Questions File
+    ifstream QF_Questions (cards_questions_file);
+    for(int i=0 ; i<cards_number-special_cards_number ; i++) //Input Questions File
         getline (QF_Questions,GameCards[i].Question);
     QF_Questions.close();
-    ifstream QF_Choices ("QF_Choices.txt");
-    for(int i=0 ; i<100 ; i++) //Input Choices File
+    ifstream QF_Choices (cards_choices_file);
+    for(int i=0 ; i<cards_number-special_cards_number ; i++) //Input Choices File
     {
         QF_Choices >> GameCards[i].Choice1;
         QF_Choices >> GameCards[i].Choice2;
@@ -48,50 +46,50 @@ void FillCards () //Fill Cards
         QF_Choices >> GameCards[i].Choice4;
     }
     QF_Choices.close();
-    ifstream QF_Answers ("QF_Answers.txt");
-    for(int i=0 ; i<100 ; i++) //Input Answers File
+    ifstream QF_Answers (cards_answer_file);
+    for(int i=0 ; i<cards_number-special_cards_number ; i++) //Input Answers File
     {
         QF_Answers >> GameCards[i].Answer;
     }
     QF_Answers.close();
 }
-//------------------------------------------------------------------------------------------------------------------------------------------------//
-CardsSet Withdraw_A_Random_Card()
+   //------------------------------------------------------------------------------------------------------------------------------------------------//
+    CardsSet *Withdraw_A_Random_Card()
 {
-    CardsSet WithdrawedCard;
     srand( time( NULL ) );
-    int Index = rand()%100;
-    int QuadProbIndex = Index;
-    int QuadProb = 1;
-    if(GameCards[Index].State == 0)
+    int Index = rand()%cards_number;
+    if(GameCards[Index].Type != '*')
     {
-        GameCards[Index].State = 1; //Set Card as deleted
-        WithdrawedCard = GameCards[Index];
+        GameCards[Index].Type = '*'; //Set Card as deleted
+        return &(GameCards[Index]);
     }
-    else if(GameCards[QuadProbIndex].State == 1)
-    {
-        while(GameCards[QuadProbIndex].State == 1)
-        {
-            QuadProbIndex = (Index + QuadProb*QuadProb) % 100; //Using Quadratic Probing to access the undeleted cards
-            QuadProb++;
-        }
-        GameCards[QuadProbIndex].State = 1; //Set Card as deleted
-        WithdrawedCard = GameCards[QuadProbIndex];
+    int linear_Prob_Index = Index;
+    while(GameCards[Index].Type == '*'){
+            linear_Prob_Index=(linear_Prob_Index+1)% cards_number;
+            if(linear_Prob_Index==Index)  // no more cards to be withdrawed
+                return NULL;
     }
-    return WithdrawedCard;
-}
-//------------------------------------------------------------------------------------------------------------------------------------------------//
-
+    return &(GameCards[linear_Prob_Index]);
+     }
+};
 int main ()
 {
-    FillCards();
-    CardsSet CurrentCard;
-    CurrentCard = Withdraw_A_Random_Card();
+
+
+    Turtle_Rabbit_Run game;
+    game.FillCards("QF_Type.txt","QF_Questions.txt","QF_Choices.txt","QF_Answers.txt");
+    CardsSet *CurrentCard;
+    CurrentCard = game.Withdraw_A_Random_Card();
     //cout<<CurrentCard.Type<<endl<<CurrentCard.Question<<endl<<CurrentCard.Answer<<endl<<;
-    cout<<GameCards[0].Type<<endl<<GameCards[0].State<<endl<<GameCards[0].Question<<endl<<GameCards[0].Answer<<endl;
-    cout<<GameCards[0].Choice1<<endl<<GameCards[0].Choice2<<endl<<GameCards[0].Choice3<<endl<<GameCards[0].Choice4<<endl;
-    cout<<GameCards[1].Type<<endl<<GameCards[1].State<<endl<<GameCards[1].Question<<endl<<GameCards[1].Answer<<endl;
-    cout<<GameCards[1].Choice1<<endl<<GameCards[1].Choice2<<endl<<GameCards[1].Choice3<<endl<<GameCards[1].Choice4<<endl;
+
+    cout<<game.GameCards[0].Type<<endl<<game.GameCards[0].Question<<endl<<game.GameCards[0].Answer<<endl;
+    cout<<game.GameCards[0].Choice1<<endl<<game.GameCards[0].Choice2<<endl<<game.GameCards[0].Choice3<<endl<<game.GameCards[0].Choice4<<endl;
+    cout<<game.GameCards[1].Type<<endl<<game.GameCards[1].Question<<endl<<game.GameCards[1].Answer<<endl;
+    cout<<game.GameCards[1].Choice1<<endl<<game.GameCards[1].Choice2<<endl<<game.GameCards[1].Choice3<<endl<<game.GameCards[1].Choice4<<endl;
+
+
+
+
     /*for(int i=0 ; i<100 ; i++)
     {
         cout<<GameCards[i].Type<<" ";
