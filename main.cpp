@@ -4,9 +4,13 @@
 #include <sstream> //Library helps to convert string into int
 #include<stdlib.h> //For Random number generating function
 #include<time.h> //For Time
+#include<cmath>
 #define cards_number 60
 #define special_cards_number 10
+#define track_length 50
+#define max_players 4
 using namespace std;
+
 struct CardsSet{
         char Type; // T -> turtle Card // R -> Rabbit card // F -> Fast "golden card" // S -> Slow card //  0 -> No action // * -> already withdrawed
         string Question;
@@ -17,9 +21,21 @@ struct CardsSet{
         string Choice4;
         };
 
+
+struct player
+{
+    string playername;
+    int playerlocation = 0;
+};
+
 class Turtle_Rabbit_Run{
+
 public:
     CardsSet GameCards[cards_number];
+    int track[track_length];
+    char number_of_players;
+    player players[max_players];
+    Turtle_Rabbit_Run(){number_of_players=0;}
 //------------------------------------------------------------------------------------------------------------------------------------------------//
 
     void FillCards (string cards_type_file,string cards_questions_file,string cards_choices_file,string cards_answer_file) //Fill Cards
@@ -28,9 +44,9 @@ public:
     for(int i=0 ; i<cards_number ; i++) //Input Type File
     {
         string line;
-        getline (QF_Type,line);
+        getline(QF_Type,line);
         stringstream geek(line);
-        geek >> GameCards[i].Type;
+        geek>>GameCards[i].Type;
     }
     QF_Type.close();
     ifstream QF_Questions (cards_questions_file);
@@ -53,30 +69,99 @@ public:
     }
     QF_Answers.close();
 }
+
+
    //------------------------------------------------------------------------------------------------------------------------------------------------//
     CardsSet *Withdraw_A_Random_Card()
 {
     srand( time( NULL ) );
     int Index = rand()%cards_number;
-    if(GameCards[Index].Type != '*')
-    {
-        GameCards[Index].Type = '*'; //Set Card as deleted
-        return &(GameCards[Index]);
-    }
-    int linear_Prob_Index = Index;
+    int Quadratic_Prob_Index = Index;
+    int counter=1;
     while(GameCards[Index].Type == '*'){
-            linear_Prob_Index=(linear_Prob_Index+1)% cards_number;
-            if(linear_Prob_Index==Index)  // no more cards to be withdrawed
+            Quadratic_Prob_Index=(Index+int(pow(counter++,2))) % cards_number;
+            if(Quadratic_Prob_Index==Index)  // no more cards to be withdrawed
                 return NULL;
     }
-    return &(GameCards[linear_Prob_Index]);
+    GameCards[Quadratic_Prob_Index].Type = '*';
+    return &(GameCards[Quadratic_Prob_Index]);
      }
+
+
+int move_one_step(player n_player)
+{
+    n_player.playerlocation += 1;
+    if(n_player.playerlocation >= 100){
+        cout << "We got a winner ! " << endl;
+    }
+    else
+        cout << "You're great , you 're one step ahead " << endl;
+    return n_player.playerlocation;
+}
+
+
+int move_two_steps( player n_player )
+{
+    n_player.playerlocation += 2;
+    if(n_player.playerlocation >= 100)
+        cout << "We got a winner ! " << endl;
+    else
+        cout << "You're great , you 're two steps ahead " << endl;
+    return n_player.playerlocation;
+}
+
+
+int move_four_steps(player n_player)
+{
+    n_player.playerlocation += 4;
+    if(n_player.playerlocation >= 100)
+        cout << "We got a winner ! " << endl;
+    else
+        cout << "You're great , you 're four step ahead " << endl;
+    return n_player.playerlocation;
+}
+
+
+int move_five_steps(player n_player)
+{
+    n_player.playerlocation += 5;
+    if(n_player.playerlocation >= 100)
+        cout << "We got a winner ! " << endl;
+    else
+        cout << "You're great , you 're five step ahead " << endl;
+    return n_player.playerlocation;
+}
+
+
+int take_players_data(){
+    string number;
+    while(true){
+    cout << "please enter number of players:" << endl;
+    cout << "( 2 - 3 - 4 )" << endl;
+    cin >> number;
+    if(number!="2" && number!="3" && number!="4"){
+        cout<<"invalid data, make sure you choose a number between 2 and 4"<<endl;
+    }
+    else
+        break;
+}
+    stringstream geek(number);
+    geek >> number_of_players;
+
+    for(int i=0;i<number_of_players; i++){
+            cout << "please enter name of player_" <<i+1<<": "<< endl;
+            cin >> players[i].playername;
+    }
+    return number_of_players;
+    }
+
 };
 int main ()
 {
 
 
     Turtle_Rabbit_Run game;
+
     game.FillCards("QF_Type.txt","QF_Questions.txt","QF_Choices.txt","QF_Answers.txt");
     CardsSet *CurrentCard;
     CurrentCard = game.Withdraw_A_Random_Card();

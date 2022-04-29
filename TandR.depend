@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1651141969 source:c:\users\lenovo\downloads\lv\nourhan ahmed - third - making some edits and adding new essential functions to the project\main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	<sstream>
+	<stdlib.h>
+	<time.h>
+	<cmath>
+
