@@ -88,6 +88,8 @@ struct player
     short correct_answers=0;
     short wrong_answers=0;
     int playerlocation=0 ;
+    string SPACE="";
+    string track="";
 };
 /*------------------------------------------------------------------------------------------------------------------------------------------*/
 class Turtle_Rabbit_Run{
@@ -147,24 +149,32 @@ CardsSet *Withdraw_A_Random_Card() //Linear Probing is best option
 int move_one_step(player *n_player) //Function to move 1 step ////Revised
 {
     n_player->playerlocation += 1;
+    n_player->SPACE=n_player->SPACE+" ";
+    n_player->track=n_player->track+"-";
     return n_player->playerlocation;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
 int move_two_steps( player *n_player ) //Function to move 2 steps ////Revised
 {
     n_player->playerlocation += 2;
+    n_player->SPACE=n_player->SPACE+"  ";
+    n_player->track=n_player->track+"--";
     return n_player->playerlocation;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
 int move_four_steps(player *n_player) //Function to move 4 steps ////Revised
 {
     n_player->playerlocation += 4;
+    n_player->SPACE=n_player->SPACE+"    ";
+    n_player->track=n_player->track+"----";
     return n_player->playerlocation;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
 int move_five_steps(player *n_player) //Function to move 5 steps ////Revised
 {
     n_player->playerlocation += 5;
+    n_player->SPACE=n_player->SPACE+"     ";
+    n_player->track=n_player->track+"-----";
     return n_player->playerlocation;
 }
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -207,6 +217,44 @@ void cards_under_flow() ////Revised ////Function to end the game and declare the
     cout<< colorize(GREEN, BLACK,1)<<winner->playername<<" is the winner with total number of "<<winner->playerlocation<<" steps."<< colorize(NC)<<endl;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
+void print_card(char type){
+  string SPACE="    ";
+  cout<< colorize(YELLOW, BLACK) <<SPACE<< "- - - - - - - - - - - - - - " << colorize(NC)<< "\n";
+  for(char i=0; i<5;i++){
+  cout << colorize(YELLOW, BLACK)<<SPACE<< "-                         - " << colorize(NC)<< "\n";
+  }
+
+  cout << colorize(YELLOW, BLACK)<<SPACE<< "-"<< colorize(NC);
+
+if(type=='T'){
+  cout << colorize(YELLOW, BLACK)<<"       TURTLE CARD       "<< colorize(NC);
+}
+
+else if(type=='R'){
+  cout << colorize(YELLOW, BLACK)<<"       RABBIT CARD       "<< colorize(NC);
+}
+
+else if(type=='F'){
+  cout<< colorize(YELLOW, BLACK) <<"       GOLDEN CARD       "<< colorize(NC);
+}
+
+else if(type=='S'){
+  cout << colorize(YELLOW, BLACK)<<"       BONUS  CARD       "<< colorize(NC);
+}
+
+else if(type=='N'){
+  cout << colorize(YELLOW, BLACK)<<"       STOP!! CARD       "<< colorize(NC);
+
+}
+
+ cout << colorize(YELLOW, BLACK)<<"- " << colorize(NC)<< "\n";
+
+  for(char i=0; i<5;i++){
+  cout << colorize(YELLOW, BLACK)<<SPACE<< "-                         - " << colorize(NC)<< "\n";
+  }
+  cout << colorize(YELLOW, BLACK)<<SPACE<< "- - - - - - - - - - - - - - " << colorize(NC)<< "\n";
+}
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
 bool another_round() ////Revised
     {
         for(short i=0;i<number_of_players;i++)
@@ -224,11 +272,12 @@ bool another_round() ////Revised
  bool manage_card(CardsSet *card,player *player) ////Revised
  {
 
-    cout<<endl<< colorize(GREEN, BLACK,1)<<"**** Good Luck "<< player->playername<<" ^_^ ****"<< colorize(NC)<<endl<<endl;
+    cout<<endl<< colorize(YELLOW, BLACK)<<"**** Good Luck "<< player->playername<<" ^_^ ****"<< colorize(NC)<<endl<<endl;
+    print_card(card->Type);
     if(card->Type=='T' || card->Type=='R')
     {
         string answer;
-        bool rabbit;
+       /* bool rabbit;
         if(card->Type=='T')
         {
             cout<< colorize(GREEN, BLACK,1)<<player->playername<<",You have got a turtle card, you can still be on track if you get the answer right!"<< colorize(NC)<<endl;
@@ -238,14 +287,14 @@ bool another_round() ////Revised
         {
             cout<< colorize(GREEN, BLACK,1)<<player->playername<<",You have got a rabbit card, keep it up and get the answer right!"<< colorize(NC)<<endl;
             rabbit=1;
-        }
-        cout<< colorize(GREEN, BLACK,1)<<endl<<"Question is: "<< colorize(NC)<<endl<<endl;
+        }*/
+        cout<< colorize(YELLOW, BLACK)<<endl<<"Question is: "<< colorize(NC)<<endl<<endl;
         cout<< colorize(CYAN, BLACK,1)<<card->Question<< colorize(NC)<<endl;
         cout<< colorize(YELLOW, BLACK,1)<<"1-"<<card->Choice1<< colorize(NC)<<endl;
         cout<< colorize(YELLOW, BLACK,1)<<"2-"<<card->Choice2<< colorize(NC)<<endl;
         cout<< colorize(YELLOW, BLACK,1)<<"3-"<<card->Choice3<< colorize(NC)<<endl;
         cout<< colorize(YELLOW, BLACK,1)<<"4-"<<card->Choice4<< colorize(NC)<<endl;
-        cout<< colorize(GREEN, BLACK,1)<<endl<<"Choose the number for the correct answer (1-2-3-4): "<< colorize(NC);
+        cout<< colorize(YELLOW, BLACK)<<endl<<"Choose the number for the correct answer (1-2-3-4): "<< colorize(NC);
         while(true)
         {
             cin>>answer;
@@ -260,15 +309,16 @@ bool another_round() ////Revised
         if(correct_choice == card->Answer)
         {
             player->correct_answers++;
-            cout<< colorize(RED, BLACK,1)<<endl<<"congrats, "<<player->playername<<"! you got it right!"<< colorize(NC)<<endl<<endl;
-            if(rabbit)
+            cout<< colorize(RED, BLACK)<<endl<<"congrats, "<<player->playername<<"! you got it right!"<< colorize(NC)<<endl<<endl;
+            if(card->Type=='R')
             {
                 if(move_four_steps(player)>=track_length)
                 {
                     Winner(player);
                     return false;
                 }
-                cout << colorize(RED, BLACK,1)<< "You're great , you 're four step ahead " << colorize(NC)<< endl;
+                display_player_track(player);
+                cout << colorize(RED, BLACK)<< "You're great , you 're four step ahead " << colorize(NC)<< endl;
             }
             else
             {
@@ -277,52 +327,56 @@ bool another_round() ////Revised
                     Winner(player);
                     return false;
                 }
-                cout << colorize(RED, BLACK,1)<< "You're great , you're two steps ahead " << colorize(NC)<< endl;
+                display_player_track(player);
+                cout << colorize(RED, BLACK)<< "You're great , you're two steps ahead " << colorize(NC)<< endl;
             }
-            cout<< colorize(RED, BLACK,1)<<endl<<"your new position is: "<< colorize(NC)<<player->playerlocation;
+            cout<< colorize(RED, BLACK)<<endl<<"your new position is: "<< colorize(NC)<<player->playerlocation;
             Sleep(3000);
             clrscr();
         }
         else
         {
             player->wrong_answers++;
-            cout<<endl<< colorize(RED, BLACK,1)<<"Wrong Answer"<< colorize(NC);
-            cout<< colorize(RED, BLACK,1)<<", hard luck next time!"<< colorize(NC)<<endl<<endl;
-            cout<<endl<< colorize(RED, BLACK,1)<<"your position is: "<<player->playerlocation<< colorize(NC);
+            cout<<endl<< colorize(RED, BLACK,4)<<"Wrong Answer"<< colorize(NC);
+            cout<< colorize(RED, BLACK)<<", hard luck next time!"<< colorize(NC)<<endl<<endl;
+            cout<<endl<< colorize(RED, BLACK)<<"your position is: "<<player->playerlocation<< colorize(NC);
             Sleep(3000);
             clrscr();
         }
     }
     else if(card->Type=='F')
     {
-        cout<<endl<< colorize(GREEN, BLACK,1)<<player->playername<<", You have got the golden card!"<< colorize(NC)<<endl<<endl;
+     //   cout<<endl<< colorize(GREEN, BLACK,1)<<player->playername<<", You have got the golden card!"<< colorize(NC)<<endl<<endl;
         if (move_five_steps(player)>=track_length)
         {
             Winner(player);
             return false;
         }
-        cout << colorize(RED, BLACK,1)<< "Great , you 're five step ahead " << colorize(NC)<< endl;
-        cout<<endl<< colorize(RED, BLACK,1)<<"your new position is: "<<player->playerlocation<< colorize(NC); //else is not necessary
+        display_player_track(player);
+        cout << colorize(RED, BLACK)<< "Great , you 're five step ahead " << colorize(NC)<< endl;
+
+        cout<<endl<< colorize(RED, BLACK)<<"your new position is: "<<player->playerlocation<< colorize(NC); //else is not necessary
         Sleep(3000);
         clrscr();
     }
     else if(card->Type=='S')
     {
-        cout<<endl<< colorize(RED, BLACK,1)<<player->playername<<", You have got the bonus card!"<< colorize(NC)<<endl<<endl;
+      //  cout<<endl<< colorize(RED, BLACK,1)<<player->playername<<", You have got the bonus card!"<< colorize(NC)<<endl<<endl;
         if (move_one_step(player)>=track_length)
         {
             Winner(player);
             return false;
         }
-        cout << colorize(RED, BLACK,1)<< "Great , you're one step ahead " << colorize(NC)<< endl;
-        cout<<endl<< colorize(RED, BLACK,1)<<"your new position is: "<<player->playerlocation<< colorize(NC); //else is not necessary
+        display_player_track(player);
+        cout << colorize(RED, BLACK)<< "Great , you're one step ahead " << colorize(NC)<< endl;
+        cout<<endl<< colorize(RED, BLACK)<<"your new position is: "<<player->playerlocation<< colorize(NC); //else is not necessary
         Sleep(3000);
         clrscr();
     }
     else if(card->Type=='N')
     {
-        cout<<endl<< colorize(RED, BLACK,1)<<player->playername<<", You have got the stop card, you are not part of this round"<< colorize(NC)<<endl<<endl;
-        cout<<endl<< colorize(RED, BLACK,1)<<"your position is: "<<player->playerlocation<< colorize(NC);
+  //      cout<<endl<< colorize(RED, BLACK,1)<<player->playername<<", You have got the stop card, you are not part of this round"<< colorize(NC)<<endl<<endl;
+        cout<<endl<< colorize(RED, BLACK)<<"your position is: "<<player->playerlocation<< colorize(NC);
         Sleep(3000);
         clrscr();
     }
@@ -354,6 +408,29 @@ void display_achievements() ////Revised
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
 
+void display_track(){
+    int color[max_players]={YELLOW,BLUE,RED,GREEN};
+    for(char i=0;i<number_of_players;i++){
+        cout<< colorize(color[i], BLACK, 1)<<players[i].playername<<": \n\n";
+        cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<"(^_^)"<< colorize(NC)<<endl;
+        cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<"  |  "<< colorize(NC)<<endl;
+        cout<< colorize(color[i], BLACK, 1)<<players[i].track<<">|||<"<< colorize(NC)<<endl;
+        cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<"  |  "<< colorize(NC)<<endl;
+        cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<" / \\ "<< colorize(NC)<<endl;
+        cout<<endl;
+        Sleep(3000);
+    }
+    clrscr();
+}
+/*---------------------------------------------------------------------------------------------------------------------------------------------*/
+void display_player_track(player* player){
+        Sleep(1000);
+        cout<< colorize(YELLOW, BLACK)<<player->SPACE<<"(^_^)"<< colorize(NC)<<endl;
+        cout<< colorize(YELLOW, BLACK)<<player->SPACE<<"  |  "<< colorize(NC)<<endl;
+        cout<< colorize(YELLOW, BLACK)<<player->track<<">|||<"<< colorize(NC)<<endl;
+        cout<< colorize(YELLOW, BLACK)<<player->SPACE<<"  |  "<< colorize(NC)<<endl;
+        cout<< colorize(YELLOW, BLACK)<<player->SPACE<<" / \\ "<< colorize(NC)<<endl<<endl;
+}
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
 void display_instructions() ////Revised
 {
@@ -398,7 +475,7 @@ int main ()
     int round=1;
     while(true)
     {
-        cout<< colorize(GREEN, BLACK,1)<<"---------------- Round#"<<round++<<" ----------------"<< colorize(NC)<<endl;
+        cout<< colorize(YELLOW, BLACK)<<"---------------- Round#"<<round++<<" ----------------"<< colorize(NC)<<endl;
         if(!(game.another_round()))
             break;
         //cout<<game.number_of_players<<endl;
@@ -408,6 +485,7 @@ int main ()
             if(!(game.manage_card(game.players_cards[i],&(game.players[i]))))
                 break;
         }
+        game.display_track();
         if(i!=game.number_of_players)
             break; ////what is the use of this statement?!
     }

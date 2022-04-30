@@ -1,10 +1,14 @@
 # depslib dependency file v1.0
-1651141969 source:c:\users\lenovo\downloads\lv\nourhan ahmed - third - making some edits and adding new essential functions to the project\main.cpp
+1651168923 source:d:\2nd year-2nd term\embeded systems\dr nasr\game\nourhan mamdouh - new commit\main.cpp
 	<iostream>
 	<fstream>
+	<windows.h>
 	<string>
 	<sstream>
 	<stdlib.h>
 	<time.h>
 	<cmath>
+	<stdio.h>
+	<conio.h>
+	<windows.h>
 
