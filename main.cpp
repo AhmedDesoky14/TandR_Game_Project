@@ -12,7 +12,7 @@
 #define getch() kbhit() //for pressing enter to start
 #ifdef _WIN32
 #include <windows.h>
-
+#include <chrono>
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
 #define DISABLE_NEWLINE_AUTO_RETURN  0x0008
 
@@ -29,7 +29,7 @@ void activateVirtualTerminal()
 /*------------------------------------------------------------------------------------------------------------------------------------------*/
 #define cards_number 60 //number of total cards
 #define special_cards_number 10 //number of special cards
-#define track_length 50 //track length
+#define track_length 5 //track length
 #define max_players 4 //max number of players to play
 //#define Question_time 5 ////
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -154,8 +154,8 @@ CardsSet *Withdraw_A_Random_Card() //Linear Probing is best option
 {
     srand( time( NULL ) );
     int probe=linear_probing(rand());
-    if(probe==-1)
-        return NULL;
+    if(probe==-1) {
+        return NULL;}
     GameCards[probe].state = 0;
     return &(GameCards[probe]);
 }
@@ -237,11 +237,12 @@ void cards_under_flow() ////Revised ////Function to end the game and declare the
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
 void print_card(char type)
 {
-  string SPACE="    ";
-  cout<< colorize(YELLOW, BLACK) <<SPACE<< "- - - - - - - - - - - - - - " << colorize(NC)<< "\n";
-  for(char i=0; i<5;i++)
-  cout << colorize(YELLOW, BLACK)<<SPACE<< "-                         - " << colorize(NC)<< "\n";
-  cout << colorize(YELLOW, BLACK)<<SPACE<< "-"<< colorize(NC);
+    auto startprint = chrono::steady_clock::now();
+    string SPACE="    ";
+    cout<< colorize(YELLOW, BLACK) <<SPACE<< "- - - - - - - - - - - - - - " << colorize(NC)<< "\n";
+    for(char i=0; i<5;i++)
+    cout << colorize(YELLOW, BLACK)<<SPACE<< "-                         - " << colorize(NC)<< "\n";
+    cout << colorize(YELLOW, BLACK)<<SPACE<< "-"<< colorize(NC);
     if(type=='T')
     cout << colorize(YELLOW, BLACK)<<"       TURTLE CARD       "<< colorize(NC);
     else if(type=='R')
@@ -256,10 +257,15 @@ void print_card(char type)
     for(char i=0; i<5;i++)
     cout << colorize(YELLOW, BLACK)<<SPACE<< "-                         - " << colorize(NC)<< "\n";
     cout << colorize(YELLOW, BLACK)<<SPACE<< "- - - - - - - - - - - - - - " << colorize(NC)<< "\n";
+
+    auto endprint = chrono::steady_clock::now();
+    cout <<endl<<"time taken in print card in microseconds: "<< chrono::duration_cast<chrono::microseconds>(endprint - startprint).count()<< " us" << endl;
+    cout << "time taken in print card in seconds: "<< chrono::duration_cast<chrono::seconds>(endprint - startprint).count()<< " sec"<<endl;
+
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
 bool another_round() ////Revised
-    {
+    {  auto start = chrono::steady_clock::now();
         for(short i=0;i<number_of_players;i++)
         {
             players_cards[i] = Withdraw_A_Random_Card();
@@ -269,6 +275,11 @@ bool another_round() ////Revised
                 return false;
             }
         }
+        auto end = chrono::steady_clock::now();
+        cout << "time taken to draw cards of players in microseconds: "<< chrono::duration_cast<chrono::microseconds>(end - start).count()<< " us" << endl;
+        cout << "time taken to draw cards of players in seconds: "<< chrono::duration_cast<chrono::seconds>(end - start).count()<< " sec"<<endl;
+        cout<<"-------------------------------------------------------------------------------------------------------------------"<<endl;
+
         return true;
     }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -403,7 +414,7 @@ void Winner(player *winner) ////Revised
     cout<< colorize(GREEN, BLACK,1)<<"Great job, "<<winner->playername<<", you are the first player to end the track!"<< colorize(NC)<<endl;
     Sleep(3000);
     clrscr();
-    cout<< colorize(CYAN, BLACK,1)<<"  "<<winner->playername<<" is the winner"<< colorize(NC)<<endl;
+    cout<< colorize(CYAN, BLACK,1)<<"  "<<winner->playername<<" is the winner"<< colorize(NC)<<endl<<endl;
     Sleep(5000);
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -424,6 +435,8 @@ void display_achievements() ////Revised
 
 void display_track()
 {
+    Sleep(1000);
+    auto start = chrono::steady_clock::now();
     int color[max_players]={YELLOW,BLUE,RED,GREEN};
     for(char i=0;i<number_of_players;i++)
     {
@@ -432,10 +445,12 @@ void display_track()
         cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<"  |  "<< colorize(NC)<<endl;
         cout<< colorize(color[i], BLACK, 1)<<players[i].track<<">|||<"<< colorize(NC)<<endl;
         cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<"  |  "<< colorize(NC)<<endl;
-        cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<" / \\ "<<players[i].playerlocation<< colorize(NC)<<endl;
-        cout<<endl;
+        cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<" / \\ "<<players[i].playerlocation<< colorize(NC)<<endl<<endl;
         Sleep(2000);
     }
+    auto end = chrono::steady_clock::now();
+    cout << "time taken to display track in microseconds: "<< (chrono::duration_cast<chrono::microseconds>(end - start).count()) -number_of_players*2000000<< " us" << endl;
+    Sleep(3000);
     clrscr();
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -452,7 +467,7 @@ void display_player_track(player* player)
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
 void display_instructions() ////Revised
-{
+{   auto start = chrono::steady_clock::now();
     cout<< colorize(YELLOW, BLACK, 1)<<"Hello, this is "<< colorize(NC);
     cout<< colorize(CYAN, BLACK, 1)<<"Turtle-Rabbit-Run"<< colorize(NC);
     cout<< colorize(YELLOW, BLACK, 1)<<" game, the instructions for the game is pretty simple:"<< colorize(NC)<<endl<<endl;
@@ -471,7 +486,10 @@ void display_instructions() ////Revised
     cout<< colorize(CYAN, BLACK, 1)<<"  5-the golden card: five steps"<< colorize(NC)<<endl<<endl;
     cout<< colorize(YELLOW, BLACK, 1)<<"Let's get started ^_^"<< colorize(NC)<<endl;
     cout<< colorize(CYAN, BLACK, 1)<<"--------------------------------------------------------------------------------------------------------------------"<<endl;
-    cout<< colorize(YELLOW, BLACK, 1)<<"Please press Enter"<< colorize(NC)<<endl;
+    auto end = chrono::steady_clock::now();
+    cout << "time taken to display instructions in microseconds: "<< chrono::duration_cast<chrono::microseconds>(end - start).count()<< " us" << endl;
+    cout<<"--------------------------------------------------------------------------------------------------------------------"<<endl;
+    cout<< colorize(YELLOW, BLACK, 1)<<"Please press Enter"<< colorize(NC);
     cin.ignore();
     getch();
     clrscr();
@@ -479,12 +497,20 @@ void display_instructions() ////Revised
 /*----------------------------------------------------------------------------------------------------------------------------------------------*/
 };
 int main ()
-{
+{ auto startgame = chrono::steady_clock::now();
 #ifdef _WIN32
     activateVirtualTerminal();
 #endif
     Turtle_Rabbit_Run game; //game object
-    game.FillCards(); //Filling game card from data files
+    {
+        auto start = chrono::steady_clock::now();
+        game.FillCards();
+        auto end = chrono::steady_clock::now();
+        cout <<colorize(YELLOW, BLACK)<<"time taken in fillcards in microseconds: "<< chrono::duration_cast<chrono::microseconds>(end - start).count()<< " us" <<colorize(NC)<<endl;
+        cout <<colorize(YELLOW, BLACK)<<"time taken in fillcards in seconds: "<< chrono::duration_cast<chrono::seconds>(end - start).count()<< " sec"<<colorize(NC)<<endl;
+        cout<<"--------------------------------------------------------------------------------------------------------------------"<<endl;
+    } //Filling game card from data files
+
     game.display_instructions(); //Function to display game instructions
     game.take_players_data(); //Function to take number of players & their data
     Sleep(1000);
@@ -507,6 +533,10 @@ int main ()
     }
     clrscr();
     game.display_achievements();
+    auto endgame = chrono::steady_clock::now();
+    //cout << "time taken in all game in nanoseconds: "<< chrono::duration_cast<chrono::nanoseconds>(endgame - startgame).count()<< " ns" << endl;
+    cout << "time taken in all game in seconds: "<< chrono::duration_cast<chrono::seconds>(endgame - startgame).count()<< " sec"<<endl;
+    return 0;
 }
 
 
