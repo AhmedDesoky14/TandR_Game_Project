@@ -34,7 +34,8 @@ void activateVirtualTerminal()
 //#define Question_time 5 ////
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
 using namespace std;
-enum COLORS {
+enum COLORS
+{
     NC=-1,
     BLACK,
     RED,
@@ -46,9 +47,9 @@ enum COLORS {
     WHITE,
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
-const char *colorize(int font, int back = -1, int style = -1) {
+const char *colorize(int font, int back = -1, int style = -1)
+{
     static char code[20];
-
     if (font >= 0)
         font += 30;
     else
@@ -57,16 +58,12 @@ const char *colorize(int font, int back = -1, int style = -1) {
         back += 40;
     else
         back = 0;
-
-    if (back > 0 && style > 0) {
+    if (back > 0 && style > 0)
         sprintf(code, "\033[%d;%d;%dm", font, back, style);
-    } else if (back > 0) {
+    else if (back > 0)
         sprintf(code, "\033[%d;%dm", font, back);
-    } else {
-
+    else
         sprintf(code, "\033[%dm", font);
-    }
-
     return code;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -101,7 +98,7 @@ public:
     CardsSet *players_cards[max_players];
     Turtle_Rabbit_Run(){number_of_players=0;} //Constructor sets number of players = 0
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------//
-void FillCards (string cards_type_file,string cards_questions_file,string cards_choices_file,string cards_answer_file) ////Revised ////"QF.TXT Need to be edited////
+void FillCards () ////Revised
 {
     ifstream QF_Type ("QF_Type.txt");
     for(int i=0 ; i<cards_number ; i++) //Input Type File
@@ -217,42 +214,27 @@ void cards_under_flow() ////Revised ////Function to end the game and declare the
     cout<< colorize(GREEN, BLACK,1)<<winner->playername<<" is the winner with total number of "<<winner->playerlocation<<" steps."<< colorize(NC)<<endl;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
-void print_card(char type){
+void print_card(char type)
+{
   string SPACE="    ";
   cout<< colorize(YELLOW, BLACK) <<SPACE<< "- - - - - - - - - - - - - - " << colorize(NC)<< "\n";
-  for(char i=0; i<5;i++){
+  for(char i=0; i<5;i++)
   cout << colorize(YELLOW, BLACK)<<SPACE<< "-                         - " << colorize(NC)<< "\n";
-  }
-
   cout << colorize(YELLOW, BLACK)<<SPACE<< "-"<< colorize(NC);
-
-if(type=='T'){
-  cout << colorize(YELLOW, BLACK)<<"       TURTLE CARD       "<< colorize(NC);
-}
-
-else if(type=='R'){
-  cout << colorize(YELLOW, BLACK)<<"       RABBIT CARD       "<< colorize(NC);
-}
-
-else if(type=='F'){
-  cout<< colorize(YELLOW, BLACK) <<"       GOLDEN CARD       "<< colorize(NC);
-}
-
-else if(type=='S'){
-  cout << colorize(YELLOW, BLACK)<<"       BONUS  CARD       "<< colorize(NC);
-}
-
-else if(type=='N'){
-  cout << colorize(YELLOW, BLACK)<<"       STOP!! CARD       "<< colorize(NC);
-
-}
-
- cout << colorize(YELLOW, BLACK)<<"- " << colorize(NC)<< "\n";
-
-  for(char i=0; i<5;i++){
-  cout << colorize(YELLOW, BLACK)<<SPACE<< "-                         - " << colorize(NC)<< "\n";
-  }
-  cout << colorize(YELLOW, BLACK)<<SPACE<< "- - - - - - - - - - - - - - " << colorize(NC)<< "\n";
+    if(type=='T')
+    cout << colorize(YELLOW, BLACK)<<"       TURTLE CARD       "<< colorize(NC);
+    else if(type=='R')
+    cout << colorize(YELLOW, BLACK)<<"       RABBIT CARD       "<< colorize(NC);
+    else if(type=='F')
+    cout<< colorize(YELLOW, BLACK) <<"       GOLDEN CARD       "<< colorize(NC);
+    else if(type=='S')
+    cout << colorize(YELLOW, BLACK)<<"       BONUS  CARD       "<< colorize(NC);
+    else if(type=='N')
+    cout << colorize(YELLOW, BLACK)<<"       STOP!! CARD       "<< colorize(NC);
+    cout << colorize(YELLOW, BLACK)<<"- " << colorize(NC)<< "\n";
+    for(char i=0; i<5;i++)
+    cout << colorize(YELLOW, BLACK)<<SPACE<< "-                         - " << colorize(NC)<< "\n";
+    cout << colorize(YELLOW, BLACK)<<SPACE<< "- - - - - - - - - - - - - - " << colorize(NC)<< "\n";
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
 bool another_round() ////Revised
@@ -318,7 +300,7 @@ bool another_round() ////Revised
                     return false;
                 }
                 display_player_track(player);
-                cout << colorize(RED, BLACK)<< "You're great , you 're four step ahead " << colorize(NC)<< endl;
+                cout << colorize(RED, BLACK)<< "You're great , you're four steps ahead " << colorize(NC)<< endl;
             }
             else
             {
@@ -337,7 +319,7 @@ bool another_round() ////Revised
         else
         {
             player->wrong_answers++;
-            cout<<endl<< colorize(RED, BLACK,4)<<"Wrong Answer"<< colorize(NC);
+            cout<<endl<< colorize(RED, BLACK)<<"Wrong Answer"<< colorize(NC);
             cout<< colorize(RED, BLACK)<<", hard luck next time!"<< colorize(NC)<<endl<<endl;
             cout<<endl<< colorize(RED, BLACK)<<"your position is: "<<player->playerlocation<< colorize(NC);
             Sleep(3000);
@@ -353,7 +335,7 @@ bool another_round() ////Revised
             return false;
         }
         display_player_track(player);
-        cout << colorize(RED, BLACK)<< "Great , you 're five step ahead " << colorize(NC)<< endl;
+        cout << colorize(RED, BLACK)<< "Great , yous're five steps ahead " << colorize(NC)<< endl;
 
         cout<<endl<< colorize(RED, BLACK)<<"your new position is: "<<player->playerlocation<< colorize(NC); //else is not necessary
         Sleep(3000);
@@ -375,7 +357,7 @@ bool another_round() ////Revised
     }
     else if(card->Type=='N')
     {
-  //      cout<<endl<< colorize(RED, BLACK,1)<<player->playername<<", You have got the stop card, you are not part of this round"<< colorize(NC)<<endl<<endl;
+        cout<<endl<< colorize(RED, BLACK,1)<<player->playername<<" ,Sorry you are not part of this round"<< colorize(NC)<<endl<<endl;
         cout<<endl<< colorize(RED, BLACK)<<"your position is: "<<player->playerlocation<< colorize(NC);
         Sleep(3000);
         clrscr();
@@ -408,28 +390,31 @@ void display_achievements() ////Revised
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
 
-void display_track(){
+void display_track()
+{
     int color[max_players]={YELLOW,BLUE,RED,GREEN};
-    for(char i=0;i<number_of_players;i++){
+    for(char i=0;i<number_of_players;i++)
+    {
         cout<< colorize(color[i], BLACK, 1)<<players[i].playername<<": \n\n";
         cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<"(^_^)"<< colorize(NC)<<endl;
         cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<"  |  "<< colorize(NC)<<endl;
         cout<< colorize(color[i], BLACK, 1)<<players[i].track<<">|||<"<< colorize(NC)<<endl;
         cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<"  |  "<< colorize(NC)<<endl;
-        cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<" / \\ "<< colorize(NC)<<endl;
+        cout<< colorize(color[i], BLACK, 1)<<players[i].SPACE<<" / \\ "<<players[i].playerlocation<< colorize(NC)<<endl;
         cout<<endl;
         Sleep(3000);
     }
     clrscr();
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
-void display_player_track(player* player){
+void display_player_track(player* player)
+{
         Sleep(1000);
         cout<< colorize(YELLOW, BLACK)<<player->SPACE<<"(^_^)"<< colorize(NC)<<endl;
         cout<< colorize(YELLOW, BLACK)<<player->SPACE<<"  |  "<< colorize(NC)<<endl;
         cout<< colorize(YELLOW, BLACK)<<player->track<<">|||<"<< colorize(NC)<<endl;
         cout<< colorize(YELLOW, BLACK)<<player->SPACE<<"  |  "<< colorize(NC)<<endl;
-        cout<< colorize(YELLOW, BLACK)<<player->SPACE<<" / \\ "<< colorize(NC)<<endl<<endl;
+        cout<< colorize(YELLOW, BLACK)<<player->SPACE<<" / \\ "<<player->playerlocation<< colorize(NC)<<endl<<endl;
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
 void display_instructions() ////Revised
@@ -461,13 +446,11 @@ void display_instructions() ////Revised
 };
 int main ()
 {
-
 #ifdef _WIN32
     activateVirtualTerminal();
 #endif
-
     Turtle_Rabbit_Run game; //game object
-    game.FillCards("QF_Type.txt","QF_Questions.txt","QF_Choices.txt","QF_Answers.txt"); //passing game data files
+    game.FillCards(); //Filling game card from data files
     game.display_instructions(); //Function to display game instructions
     game.take_players_data(); //Function to take number of players & their data
     Sleep(1000);
