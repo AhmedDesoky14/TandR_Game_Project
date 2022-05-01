@@ -1,22 +1,20 @@
-#include <iostream> //for cout cin functions
+#include <iostream> //For cout cin
 #include <fstream> //I/O Files Library
-#include <windows.h> //for clock timers
-#include <string> //for strings
+#include <windows.h> //For clock timers
+#include <string> //For strings
 #include <sstream> //Library helps to convert string into int
 #include<stdlib.h> //For Random number generating function
 #include<time.h> //For Time
-#include<cmath> //for math functions
-#include<stdio.h>
-#include <conio.h>
-#define clrscr() system("cls"); // for clrscr(); function
-#define getch() kbhit() //for pressing enter to start
-#ifdef _WIN32
-#include <windows.h>
-#include <chrono>
+#include<cmath> //For math functions
+#include <conio.h> //For pressing enter
+#define clrscr() system("cls"); // For clrscr(); function
+#define getch() kbhit() //For pressing enter to start
+#ifdef _WIN32 //For coloring
+#include <windows.h> //For delaying function
+#include <chrono> //For time
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
 #define DISABLE_NEWLINE_AUTO_RETURN  0x0008
-
-void activateVirtualTerminal()
+void activateVirtualTerminal()                                              ////For coloring
 {
     HANDLE handleOut = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD consoleMode;
@@ -27,14 +25,13 @@ void activateVirtualTerminal()
 }
 #endif
 /*------------------------------------------------------------------------------------------------------------------------------------------*/
-#define cards_number 60 //number of total cards
-#define special_cards_number 10 //number of special cards
-#define track_length 5 //track length
+#define cards_number 100 //number of total cards
+#define special_cards_number 15 //number of special cards
+#define track_length 50 //track length
 #define max_players 4 //max number of players to play
-//#define Question_time 5 ////
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
 using namespace std;
-enum COLORS
+enum COLORS                                                         //For coloring
 {
     NC=-1,
     BLACK,
@@ -47,7 +44,7 @@ enum COLORS
     WHITE,
 };
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
-const char *colorize(int font, int back = -1, int style = -1)
+const char *colorize(int font, int back = -1, int style = -1)       //For coloring
 {
     static char code[20];
     if (font >= 0)
@@ -70,9 +67,9 @@ const char *colorize(int font, int back = -1, int style = -1)
     // style: 1 -> bold , 4 -> underline, etc
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------*/
-struct CardsSet
+struct CardsSet //Structure of the card
 {
-    char Type; // T -> turtle Card // R -> Rabbit card // F -> Fast "golden card" // S -> bonus card //  N -> No action
+    char Type; // T -> Turtle Card // R -> Rabbit card // F -> Golden card // S -> Bonus card //  N -> No action card
     bool state = 1; // 0 -> Withdrawed // 1 -> New
     string Question;
     short Answer; // 1 or 2 or 3 or 4
@@ -82,37 +79,34 @@ struct CardsSet
     string Choice4;
 };
 /*-----------------------------------------------------------------------------------------------------------------------------------------*/
-struct player
+struct player //Structure of the player
 {
     string playername;
     short correct_answers=0;
     short wrong_answers=0;
     int playerlocation=0 ;
-    string SPACE="";
-    string track="";
+    string SPACE=""; //For further improved display
+    string track=""; //For further improved display
 };
 /*------------------------------------------------------------------------------------------------------------------------------------------*/
-class Turtle_Rabbit_Run{
+class Turtle_Rabbit_Run
+{
 public:
     CardsSet GameCards[cards_number];
-    //int track[track_length];
     short number_of_players;
     player players[max_players];
     CardsSet *players_cards[max_players];
-    int PRIME;
-    Turtle_Rabbit_Run(){
-        number_of_players=0;
-        } //Constructor sets number of players = 0
+    Turtle_Rabbit_Run(){number_of_players=0;} //Constructor sets number of players = 0
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------//
-void FillCards () ////Revised
+void FillCards () //Function to fill cards from their data files to the hashtable
 {
     ifstream QF_Type ("QF_Type.txt");
     for(int i=0 ; i<cards_number ; i++) //Input Type File
     {
         string line;
         getline(QF_Type,line);
-       stringstream geek(line);
-       geek>>GameCards[i].Type;
+        stringstream geek(line); //convert string into int
+        geek>>GameCards[i].Type;
     }
     QF_Type.close();
     ifstream QF_Questions ("QF_Questions.txt");
@@ -122,7 +116,7 @@ void FillCards () ////Revised
     ifstream QF_Choices ("QF_Choices.txt");
     for(int i=0 ; i<cards_number-special_cards_number ; i++) //Input Choices File //Note: First 50 cards are the questions cards
     {
-        getline (QF_Choices,GameCards[i].Choice1); //If still needed
+        getline (QF_Choices,GameCards[i].Choice1);
         getline (QF_Choices,GameCards[i].Choice2);
         getline (QF_Choices,GameCards[i].Choice3);
         getline (QF_Choices,GameCards[i].Choice4);
@@ -134,14 +128,12 @@ void FillCards () ////Revised
     QF_Answers.close();
 }
 /*----------------------------------------------------------------------------------------------------------------------------------------------------*/
-int inline Hash(int value){
-return value%cards_number;
-}
-
+int inline Hash(int value){return value%cards_number;} //Line function that returns index after hashing
 /*----------------------------------------------------------------------------------------------------------------------------------------------------*/
-int linear_probing(int value){
-int probe= Hash(value), initialPos = probe;
-        while(GameCards[probe].state == 0)
+int linear_probing(int value) //Function that use linear probing to skip the withdrawed cards "Deleted" and return the index of the new cards
+{
+    int probe= Hash(value), initialPos = probe;
+    while(GameCards[probe].state == 0)
     {
         probe = (probe + 1) % cards_number;
         if(probe==initialPos)  // no more cards to be withdrawed
@@ -150,7 +142,7 @@ int probe= Hash(value), initialPos = probe;
         return probe;
 }
 /*------------------------------------------------------------------------------------------------------------------------------------------*/
-CardsSet *Withdraw_A_Random_Card() //Linear Probing is best option
+CardsSet *Withdraw_A_Random_Card() //Function to withdraw cards using linear probing
 {
     srand( time( NULL ) );
     int probe=linear_probing(rand());
@@ -160,7 +152,7 @@ CardsSet *Withdraw_A_Random_Card() //Linear Probing is best option
     return &(GameCards[probe]);
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
-int move_one_step(player *n_player) //Function to move 1 step ////Revised
+int move_one_step(player *n_player) //Function to move 1 step in case of Bonus card
 {
     n_player->playerlocation += 1;
     n_player->SPACE=n_player->SPACE+" ";
@@ -168,7 +160,7 @@ int move_one_step(player *n_player) //Function to move 1 step ////Revised
     return n_player->playerlocation;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
-int move_two_steps( player *n_player ) //Function to move 2 steps ////Revised
+int move_two_steps( player *n_player ) //Function to move 2 steps in case of Turtle card after giving the correct answer
 {
     n_player->playerlocation += 2;
     n_player->SPACE=n_player->SPACE+"  ";
@@ -176,7 +168,7 @@ int move_two_steps( player *n_player ) //Function to move 2 steps ////Revised
     return n_player->playerlocation;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
-int move_four_steps(player *n_player) //Function to move 4 steps ////Revised
+int move_four_steps(player *n_player) //Function to move 4 steps in case of Rabbit card after giving the correct answer
 {
     n_player->playerlocation += 4;
     n_player->SPACE=n_player->SPACE+"    ";
@@ -184,7 +176,7 @@ int move_four_steps(player *n_player) //Function to move 4 steps ////Revised
     return n_player->playerlocation;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
-int move_five_steps(player *n_player) //Function to move 5 steps ////Revised
+int move_five_steps(player *n_player) //Function to move 5 steps in case of the Golden card
 {
     n_player->playerlocation += 5;
     n_player->SPACE=n_player->SPACE+"     ";
@@ -192,17 +184,17 @@ int move_five_steps(player *n_player) //Function to move 5 steps ////Revised
     return n_player->playerlocation;
 }
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-short take_players_data() ////Revised
+short take_players_data() //Function that stores players data and returns their number
 {
     string number;
     while(true)
     {
-        cout << colorize(CYAN, BLACK,1)<< "please enter number of players:" << colorize(NC)<< endl;
+        cout << colorize(CYAN, BLACK,1)<< "Please enter the number of players:" << colorize(NC)<< endl;
         cout << colorize(CYAN, BLACK, 1)<< "( 2 - 3 - 4 )" << colorize(NC)<<endl;
         cin >> number;
         cout<<endl;
         if(number!="2" && number!="3" && number!="4")
-            cout<<endl<< colorize(RED, BLACK)<<"invalid data, make sure you choose a number between 2 and 4"<< colorize(NC)<<endl<<endl;
+            cout<<endl<< colorize(RED, BLACK)<<"Invalid data, please make sure you choose a number between 2 and 4"<< colorize(NC)<<endl<<endl;
         else
             break;
     }
@@ -211,17 +203,16 @@ short take_players_data() ////Revised
     int color[max_players]={YELLOW,BLUE,RED,GREEN};
     for(short i=0;i<number_of_players; i++)
     {
-        cout << colorize(color[i], BLACK,1)<< "please enter name of player_" <<i+1<<": "<< colorize(NC)<< endl;
+        cout << colorize(color[i], BLACK,1)<< "Please enter name of player " <<i+1<<": "<< colorize(NC);
         cin >> players[i].playername;
         cout<<endl;
     }
     return number_of_players;
 }
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------*/
-void cards_under_flow() ////Revised ////Function to end the game and declare the winner in case of cards underflow
+void cards_under_flow() //Function to end the game and declare the winner in case of all cards are withdrawed
 {
-
-    cout<< colorize(GREEN, BLACK,1)<<"GAME OVER !! "<< colorize(NC)<<endl<<endl;
+    cout<< colorize(GREEN, BLACK,1)<<"GAME OVER !!"<< colorize(NC)<<endl<<endl;
     Sleep(2000);
     player *winner;
     winner = &(players[0]);
@@ -230,12 +221,13 @@ void cards_under_flow() ////Revised ////Function to end the game and declare the
         if(players[i].playerlocation>winner->playerlocation)
             winner = &(players[i]);
     }
-    cout<< colorize(GREEN, BLACK,1)<<winner->playername<<" is the winner with total number of "<<winner->playerlocation<<" steps."<< colorize(NC)<<endl;
+    cout<< colorize(GREEN, BLACK,1)<<winner->playername<<" is the winner with total number of "<<winner->playerlocation<<" steps."<< colorize(NC)<<endl<<endl;
     Sleep(2000);
+    display_track();
     clrscr();
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
-void print_card(char type)
+void print_card(char type) //Function to print cards
 {
     auto startprint = chrono::steady_clock::now();
     string SPACE="    ";
@@ -257,35 +249,32 @@ void print_card(char type)
     for(char i=0; i<5;i++)
     cout << colorize(YELLOW, BLACK)<<SPACE<< "-                         - " << colorize(NC)<< "\n";
     cout << colorize(YELLOW, BLACK)<<SPACE<< "- - - - - - - - - - - - - - " << colorize(NC)<< "\n";
-
     auto endprint = chrono::steady_clock::now();
-    cout <<endl<<"time taken in print card in microseconds: "<< chrono::duration_cast<chrono::microseconds>(endprint - startprint).count()<< " us" << endl;
-    cout << "time taken in print card in seconds: "<< chrono::duration_cast<chrono::seconds>(endprint - startprint).count()<< " sec"<<endl;
-
+    cout <<endl<<"time taken to print card in microseconds: "<< chrono::duration_cast<chrono::microseconds>(endprint - startprint).count()<< " us" << endl;
+    cout << "time taken to print card in seconds: "<< chrono::duration_cast<chrono::seconds>(endprint - startprint).count()<< " sec"<<endl;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
-bool another_round() ////Revised
-    {  auto start = chrono::steady_clock::now();
-        for(short i=0;i<number_of_players;i++)
+bool another_round() //Function to go to another round
+{
+    auto start = chrono::steady_clock::now();
+    for(short i=0;i<number_of_players;i++)
+    {
+        players_cards[i] = Withdraw_A_Random_Card();
+        if(players_cards[i]==NULL)
         {
-            players_cards[i] = Withdraw_A_Random_Card();
-            if(players_cards[i]==NULL)
-            {
-                cards_under_flow(); //call a function to end the game due to cards underflow
-                return false;
-            }
+            cards_under_flow(); //call a function to end the game due to cards underflow
+            return false;
         }
-        auto end = chrono::steady_clock::now();
-        cout << "time taken to draw cards of players in microseconds: "<< chrono::duration_cast<chrono::microseconds>(end - start).count()<< " us" << endl;
-        cout << "time taken to draw cards of players in seconds: "<< chrono::duration_cast<chrono::seconds>(end - start).count()<< " sec"<<endl;
-        cout<<"-------------------------------------------------------------------------------------------------------------------"<<endl;
-
-        return true;
     }
+    auto end = chrono::steady_clock::now();
+    cout << "time taken to draw cards for players in microseconds: "<< chrono::duration_cast<chrono::microseconds>(end - start).count()<< " us" << endl;
+    cout << "time taken to draw cards for players in seconds: "<< chrono::duration_cast<chrono::seconds>(end - start).count()<< " sec"<<endl;
+    cout<<"-------------------------------------------------------------------------------------------------------------------"<<endl;
+    return true;
+}
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------*/
- bool manage_card(CardsSet *card,player *player) ////Revised
+ bool manage_card(CardsSet *card,player *player) //Function to manage cards and rounds
  {
-
     cout<<endl<< colorize(YELLOW, BLACK)<<"**** Good Luck "<< player->playername<<" ^_^ ****"<< colorize(NC)<<endl<<endl;
     print_card(card->Type);
     if(card->Type=='T' || card->Type=='R')
@@ -297,44 +286,22 @@ bool another_round() ////Revised
         cout<< colorize(YELLOW, BLACK,1)<<"2-"<<card->Choice2<< colorize(NC)<<endl;
         cout<< colorize(YELLOW, BLACK,1)<<"3-"<<card->Choice3<< colorize(NC)<<endl;
         cout<< colorize(YELLOW, BLACK,1)<<"4-"<<card->Choice4<< colorize(NC)<<endl;
-
-/*
- int counter = 11 ; //amount of seconds
- Sleep(1000);
- while (counter-- >= 1)
- {
- cout << colorize(RED, BLACK)<< "\rTime remaining: " << counter<<" ... Choose the number for the correct answer (1-2-3-4): " <<colorize(NC) ;
- Sleep(1000);
- if (kbhit())
- {
- cin>>answer;
- if(answer!="1"&& answer!="2" && answer!="3" && answer!="4")
-                cout<< colorize(RED, BLACK)<<endl<<"\ninvalid data, make sure you choose a number representing your choice between 1 and 4\n"<< colorize(NC)<<endl;
-            else
-                break;;
- }
- if (counter == 0)
- {
- cout << colorize(RED, BLACK)<< "\nSorry, time is up. hard luck next round" <<colorize(NC)<< endl;
- }
- }    */
-
-       cout<< colorize(YELLOW, BLACK)<<endl<<"Choose the number for the correct answer (1-2-3-4): "<< colorize(NC);
+        cout<< colorize(YELLOW, BLACK)<<endl<<"Choose the number for the correct answer (1-2-3-4): "<< colorize(NC);
         while(true)
         {
             cin>>answer;
             if(answer!="1"&& answer!="2" && answer!="3" && answer!="4")
-                cout<< colorize(RED, BLACK)<<endl<<"invalid data, make sure you choose a number representing your choice between 1 and 4"<< colorize(NC)<<endl;
+                cout<< colorize(RED, BLACK)<<endl<<"Invalid data, please make sure you choose a number representing your choice between 1 and 4"<< colorize(NC)<<endl;
             else
                 break;
         }
         short correct_choice;
         stringstream geek(answer);
-          geek >> correct_choice;
+        geek >> correct_choice; //convert string into int
         if(correct_choice == card->Answer)
         {
             player->correct_answers++;
-            cout<< colorize(RED, BLACK)<<endl<<"congrats, "<<player->playername<<"! you got it right!"<< colorize(NC)<<endl<<endl;
+            cout<< colorize(RED, BLACK)<<endl<<"Congrats, "<<player->playername<<"! you've got it right!"<< colorize(NC)<<endl<<endl;
             if(card->Type=='R')
             {
                 if(move_four_steps(player)>=track_length)
@@ -371,7 +338,6 @@ bool another_round() ////Revised
     }
     else if(card->Type=='F')
     {
-     //   cout<<endl<< colorize(GREEN, BLACK,1)<<player->playername<<", You have got the golden card!"<< colorize(NC)<<endl<<endl;
         if (move_five_steps(player)>=track_length)
         {
             Winner(player);
@@ -379,14 +345,12 @@ bool another_round() ////Revised
         }
         display_player_track(player);
         cout << colorize(RED, BLACK)<< "Great , yous're five steps ahead " << colorize(NC)<< endl;
-
         cout<<endl<< colorize(RED, BLACK)<<"your new position is: "<<player->playerlocation<< colorize(NC); //else is not necessary
         Sleep(3000);
         clrscr();
     }
     else if(card->Type=='S')
     {
-      //  cout<<endl<< colorize(RED, BLACK,1)<<player->playername<<", You have got the bonus card!"<< colorize(NC)<<endl<<endl;
         if (move_one_step(player)>=track_length)
         {
             Winner(player);
@@ -408,7 +372,7 @@ bool another_round() ////Revised
     return true;
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------*/
-void Winner(player *winner) ////Revised
+void Winner(player *winner) //Function to declare the winner
 {
     cout<< colorize(GREEN, BLACK,1)<<"GAME OVER"<< colorize(NC)<<endl;
     cout<< colorize(GREEN, BLACK,1)<<"Great job, "<<winner->playername<<", you are the first player to end the track!"<< colorize(NC)<<endl;
@@ -418,22 +382,30 @@ void Winner(player *winner) ////Revised
     Sleep(5000);
 }
 /*-------------------------------------------------------------------------------------------------------------------------------------------------*/
-void display_achievements() ////Revised
+void display_achievements() //Function to show achievements
 {
-    cout<<endl<< colorize(MAGENTA, BLACK, 1)<<"players achievements: "<< colorize(NC)<<endl<<endl;
+    cout<<endl<< colorize(MAGENTA, BLACK, 1)<<"Players Achievements: "<< colorize(NC)<<endl<<endl;
     float full_mark;
+    int withcards = 0;
+    int totalquestions = 0;
     int color[max_players]={YELLOW,BLUE,RED,GREEN};
     for(int i=0;i<number_of_players;i++)
     {
-        full_mark=players[i].correct_answers + players[i].wrong_answers;
-        cout<< colorize(color[i], BLACK, 1)<<"-Player "<<players[i].playername<<" got the right answer of "<<players[i].correct_answers<<" questions out of "<< colorize(NC);
+        full_mark = players[i].correct_answers + players[i].wrong_answers;
+        cout<< colorize(color[i], BLACK, 1)<<" Player "<<players[i].playername<<" got the right answer of "<<players[i].correct_answers<<" questions out of "<< colorize(NC);
         cout<< colorize(color[i], BLACK, 1)<<full_mark<<" questions"<< colorize(NC)<<endl;
         cout<< colorize(color[i], BLACK, 1)<<"   with average score of "<<((players[i].correct_answers)/full_mark)*100<<"%"<< colorize(NC)<<endl<<endl;
     }
+    for(int i=0;i<number_of_players;i++)
+        totalquestions = totalquestions + players[i].correct_answers + players[i].wrong_answers;
+    cout<<"Total Number of Questions asked: "<<totalquestions<<endl;
+    for(int i=0;i<cards_number;i++)
+        if(GameCards[i].state == 0)
+            withcards++;
+    cout<<"Total number of cards withdrawed: "<<withcards<<endl;
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
-
-void display_track()
+void display_track() //Function to display track and position of all players
 {
     Sleep(1000);
     auto start = chrono::steady_clock::now();
@@ -454,7 +426,7 @@ void display_track()
     clrscr();
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
-void display_player_track(player* player)
+void display_player_track(player* player) //Function to display position of each player
 {
         Sleep(1000);
         cout<<endl;
@@ -466,16 +438,15 @@ void display_player_track(player* player)
         Sleep(1000);
 }
 /*---------------------------------------------------------------------------------------------------------------------------------------------*/
-void display_instructions() ////Revised
+void display_instructions() //Function to display instructions
 {   auto start = chrono::steady_clock::now();
     cout<< colorize(YELLOW, BLACK, 1)<<"Hello, this is "<< colorize(NC);
-    cout<< colorize(CYAN, BLACK, 1)<<"Turtle-Rabbit-Run"<< colorize(NC);
-    cout<< colorize(YELLOW, BLACK, 1)<<" game, the instructions for the game is pretty simple:"<< colorize(NC)<<endl<<endl;
+    cout<< colorize(CYAN, BLACK, 1)<<"TandR"<< colorize(NC);
+    cout<< colorize(YELLOW, BLACK, 1)<<" Game, the instructions for the game is pretty simple:"<< colorize(NC)<<endl<<endl;
     cout<< colorize(YELLOW, BLACK, 1)<<"-You can play it with one,two or even three of your friends."<<endl<<endl;
     cout<< colorize(YELLOW, BLACK, 1)<<"-Basically, it is something like a context between you and your friends testing your general knowledges"<< colorize(NC)<<endl<<endl;
     cout<< colorize(YELLOW, BLACK, 1)<<"-You play with total number of "<<cards_number<<" cards"<<endl<<endl;
     cout<< colorize(YELLOW, BLACK, 1)<<"-"<<cards_number-special_cards_number<<" of them are question cards"<<" and "<<special_cards_number<<" are special cards"<< colorize(NC)<<endl<<endl;
-    //cout<<"-You play with total number of "<<cards_number<<" cards"<<endl<<endl;
     cout<< colorize(YELLOW, BLACK, 1)<< "-Question cards could be of type turtle or rabbit, special cards could be the golden card, "<< colorize(NC)<<endl;
     cout<< colorize(YELLOW, BLACK, 1)<<"the bonus card or the stop card."<< colorize(NC)<<endl<<endl;
     cout<< colorize(YELLOW, BLACK, 1)<<"-number of steps that each card allows you to move:"<< colorize(NC)<<endl;
@@ -491,11 +462,11 @@ void display_instructions() ////Revised
     cout<<"--------------------------------------------------------------------------------------------------------------------"<<endl;
     cout<< colorize(YELLOW, BLACK, 1)<<"Please press Enter"<< colorize(NC);
     cin.ignore();
-    getch();
+    _getch();
     clrscr();
 }
-/*----------------------------------------------------------------------------------------------------------------------------------------------*/
 };
+/*----------------------------------------------------------------------------------------------------------------------------------------------*/
 int main ()
 { auto startgame = chrono::steady_clock::now();
 #ifdef _WIN32
@@ -506,8 +477,8 @@ int main ()
         auto start = chrono::steady_clock::now();
         game.FillCards();
         auto end = chrono::steady_clock::now();
-        cout <<colorize(YELLOW, BLACK)<<"time taken in fillcards in microseconds: "<< chrono::duration_cast<chrono::microseconds>(end - start).count()<< " us" <<colorize(NC)<<endl;
-        cout <<colorize(YELLOW, BLACK)<<"time taken in fillcards in seconds: "<< chrono::duration_cast<chrono::seconds>(end - start).count()<< " sec"<<colorize(NC)<<endl;
+        cout <<colorize(YELLOW, BLACK)<<"time taken to fill cards in hash table in microseconds: "<< chrono::duration_cast<chrono::microseconds>(end - start).count()<< " us" <<colorize(NC)<<endl;
+        cout <<colorize(YELLOW, BLACK)<<"time taken to fill cards in hash table in seconds: "<< chrono::duration_cast<chrono::seconds>(end - start).count()<< " sec"<<colorize(NC)<<endl;
         cout<<"--------------------------------------------------------------------------------------------------------------------"<<endl;
     } //Filling game card from data files
 
@@ -515,7 +486,7 @@ int main ()
     game.take_players_data(); //Function to take number of players & their data
     Sleep(1000);
     clrscr();
-    int round=1;
+    int round=1; //First Round
     while(true)
     {
         if(!(game.another_round()))
@@ -529,13 +500,12 @@ int main ()
         }
         game.display_track();
         if(i!=game.number_of_players)
-            break; ////what is the use of this statement?!
+            break;
     }
     clrscr();
     game.display_achievements();
     auto endgame = chrono::steady_clock::now();
-    //cout << "time taken in all game in nanoseconds: "<< chrono::duration_cast<chrono::nanoseconds>(endgame - startgame).count()<< " ns" << endl;
-    cout << "time taken in all game in seconds: "<< chrono::duration_cast<chrono::seconds>(endgame - startgame).count()<< " sec"<<endl;
+    cout << "Game Time: "<<chrono::duration_cast<chrono::seconds>(endgame - startgame).count()<< " sec"<<endl;
     return 0;
 }
 

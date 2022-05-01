@@ -109,7 +109,7 @@ Rat
 The Louvre
 The Hermitage
 Metropolitan Museum of Art
-None
+The Grand Museum
 The Girl with the Pearl Earring
 Whistler's Mother
 The Milkmaid
@@ -213,6 +213,7 @@ Ti amo
 Adele
 Alicia Keys
 Ariana Grande
+Cardi B
 Jupiter
 Saturn
 Mars
@@ -265,3 +266,75 @@ Accio
 'Don't have a seacow, man!'
 'If in doubt, shout it out'
 'Fish are friends, not food'
+Doja Cat
+Sia
+Katy Perry
+Jacob Lee
+1993
+1990
+1992
+1991
+Libya
+Morocco
+France
+Balkans
+EXO
+BLACKPINK
+BTS
+Red Velvet
+Gellert Grindelwald
+Garrick Ollivander
+Percival Graves
+Seraphina Picquery
+The Soviet Union
+France
+Poland
+Belgium
+Jim Halpert
+Dwight Shrute
+Stanley Hudson
+Creed Bratton
+632 AC
+622 AC
+621 AC
+613 AC
+Eretria
+Gabon
+Nigeria
+Liberia
+James Cameron
+Zack Snyder
+Christopher Nolan
+Martin Scorsese
+Marc
+Steven
+Jake
+Khonsu
+Christian Bale
+Ben Stiller
+Robert De Niro
+Joe Pesci
+Charles Dickens
+Agatha Christie
+Walter Scott
+George Bernard Shaw
+1299
+1211
+1199
+1301
+Roxana
+Olympias
+Stateira
+Parysatis II
+George Washington
+John Adams
+Abraham Lincoln
+Theodore Roosevelt
+Guccio Gucci
+Aldo Gucci
+Rodolfo Gucci
+Maurizio Gucci
+Horus
+Seth
+Bastet
+Osiris
