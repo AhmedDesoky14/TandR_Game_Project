@@ -29,7 +29,7 @@ TandR is an engaging console-based game developed using C++ that leverages Objec
 
 ## Credits
 
-- **Developers**: Ahmed Desoky
+- **Engineers**: Ahmed Desoky
                   Nourhan Mamdouh
                   Ahmed Wael
                   Nourhan Ahmed
