@@ -1,19 +1,35 @@
-# TandR_Game_Project
-Authors: Ahmed Moustafa Desoky
-         Ahmed Wael Hassan
-         Nourhan Mamdouh
-         Nourhan Ahmed
-Turtle and Rabbit Game, a game project using data structures.
-To make this simple game we used hashtables data structure & OOP.
+# TandR (Turtle and Rabbit)
 
-The game simple rules are:
-this game is played by 2-4 players.
-the player in his turn picks a card chosen randomly by the program, it may be Turtle, Rabbit, Golden Card, Bonus Card and No action card.
-in case of,
-Turtle: the player is asked a question, if he answered correctly, he gets 2 steps ahead, if wrong he doesn't move
-Rabbit: the player is asked a question, if he answered correctly, he gets 4 steps ahead, if wrong he doesn't move
-Golden Card: the players gets 5 steps ahead directly
-Bonus Card: the players gets 1 step ahead directly
-No action card: the player doesn't move
+TandR is an engaging console-based game developed using C++ that leverages Object-Oriented Programming (OOP) principles, Linked Lists, and Hash Tables. The game is designed for multiple players, with a simple and enjoyable mechanic of drawing cards, answering questions, and advancing steps. The first player to reach the 100-step finish line wins!
 
-the first player to reach the finish line is the winner
+---
+
+## Features
+
+- **Card Draw Mechanics**: Players draw a card each turn to determine their move.
+- **Card Types**:
+  - **Bonus Card**: Advance 1 step without answering a question.
+  - **Turtle Card**: Answer a question correctly to advance 2 steps.
+  - **Rabbit Card**: Answer a question correctly to advance 4 steps.
+  - **Golden Card**: Advance 5 steps without answering a question.
+- **Gameplay**:
+  - Each turn, players take turns drawing a card and following the rules of the card drawn.
+- **Winner**: The game ends when a player reaches or exceeds 100 steps.
+
+---
+
+## Game Rules
+
+1. Players are arranged in turn order at the start.
+2. Each player draws a card on their turn and follows its instructions.
+3. If a question is required, the player must answer correctly to gain the specified steps.
+4. The game ends when a player reaches or exceeds 100 steps.
+
+---
+
+## Credits
+
+- **Developers**: Ahmed Desoky
+                  Nourhan Mamdouh
+                  Ahmed Wael
+                  Nourhan Ahmed
